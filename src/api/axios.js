@@ -2,7 +2,8 @@ import axios from "axios";
 
 const API = axios.create({
   baseURL: "https://skyfall-backend-1.onrender.com/api",
-  withCredentials: true, // ← sends cookies with every request
+  withCredentials: true,
+  timeout: 30000,
 });
 
 API.interceptors.request.use((config) => {
