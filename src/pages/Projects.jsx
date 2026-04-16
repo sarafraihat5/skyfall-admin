@@ -11,14 +11,14 @@ export default function Projects() {
   const [saving, setSaving]   = useState(false);
   const [confirm, setConfirm] = useState(null);
 
-  // form fields
+
   const [title, setTitle]           = useState("");
   const [subtitle, setSubtitle]     = useState("");
   const [description, setDescription] = useState("");
   const [url, setUrl]               = useState("");
-  const [images, setImages]         = useState([]); // File objects
-  const [previews, setPreviews]     = useState([]); // preview URLs
-  const [existingImages, setExistingImages] = useState([]); // already saved
+  const [images, setImages]         = useState([]); // file objects
+  const [previews, setPreviews]     = useState([]); // preview urls
+  const [existingImages, setExistingImages] = useState([]); //  saved
 
   const load = useCallback(async () => {
     setLoading(true);

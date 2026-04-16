@@ -36,7 +36,7 @@ export default function WallOfSuccess() {
 
   useEffect(() => { load(); }, [load]);
 
-  // ✅ Just store the value — no pre-upload
+
   const handleChange = (key, value) => {
     setModal((m) => ({ ...m, data: { ...m.data, [key]: value } }));
   };
@@ -53,7 +53,7 @@ export default function WallOfSuccess() {
 
     setSaving(true);
     try {
-      // ✅ Always send as FormData so multer can read req.file on backend
+    
       const form = new FormData();
       form.append("heading", data.heading);
       form.append("body",    data.body);
@@ -61,7 +61,7 @@ export default function WallOfSuccess() {
       form.append("role",    data.role);
       form.append("url",     data.url);
 
-      // ✅ Only append file if admin picked a new one
+    
       if (data.avatar instanceof File) {
         form.append("avatar", data.avatar);
       }

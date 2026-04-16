@@ -4,8 +4,8 @@ const TOKEN_KEY = "sf_token";
 
 export const setAuth = (token) => {
   Cookies.set(TOKEN_KEY, token, {
-    expires: 7,        // 7 days
-    secure: false,     // set true in production (HTTPS)
+    expires: 7,       
+    secure: false,    
     sameSite: "Lax",
   });
 };

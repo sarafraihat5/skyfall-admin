@@ -16,7 +16,7 @@ export default function Login() {
     setLoading(true);
     try {
       const { data } = await API.post("/admin/auth/login", { email, password });
-      setAuth(data.token); // ← saves to cookie
+      setAuth(data.token); 
       toast.success("Welcome back!");
       setTimeout(() => navigate("/"), 500);
     } catch (e) {

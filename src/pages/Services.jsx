@@ -92,7 +92,7 @@ export default function Services() {
             <div className="cards-grid">
               {items.map((item) => (
                 <div className="card" key={item._id}>
-                  {/* {item.icon && <div className="service-icon">{item.icon}</div>} */}
+                  
                   <div className="card-title">{item.title}</div>
                   <div className="card-desc">{item.description}</div>
             

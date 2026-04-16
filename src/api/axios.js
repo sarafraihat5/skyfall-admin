@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://skyfall-backend-1.onrender.com/api",
+baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
   timeout: 30000,
 });
