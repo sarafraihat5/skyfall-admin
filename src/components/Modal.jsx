@@ -59,7 +59,7 @@ export default function Modal({ title, fields, data, onChange, onSave, onClose, 
               />
             )}
 
-            {/* ✅ char counter for limited fields */}
+        
             {f.maxLength && f.type !== "file" && (
               <span className="char-count">
                 {(data[f.key] || "").length}/{f.maxLength}

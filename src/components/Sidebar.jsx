@@ -17,12 +17,12 @@ export default function Sidebar() {
   const navigate  = useNavigate();
   const location  = useLocation();
 
-  // Close sidebar on route change
+
   useEffect(() => {
     setOpen(false);
   }, [location.pathname]);
 
-  // Close sidebar when clicking outside
+
   useEffect(() => {
     if (!open) return;
     const handle = (e) => {
@@ -42,7 +42,7 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* ── HAMBURGER BUTTON (mobile only) ── */}
+  
      <button
   className={`hamburger ${open ? "hidden" : ""}`}
   onClick={() => setOpen((p) => !p)}
@@ -50,10 +50,10 @@ export default function Sidebar() {
   <span /><span /><span />
 </button>
 
-      {/* ── OVERLAY (mobile only) ── */}
+
       {open && <div className="sidebar-overlay" onClick={() => setOpen(false)} />}
 
-      {/* ── SIDEBAR ── */}
+     
       <aside className={`sidebar ${open ? "open" : ""}`}>
         <div className="sb-logo">SKYFALL</div>
         <nav className="sb-nav">
