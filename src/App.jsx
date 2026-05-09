@@ -9,10 +9,39 @@ import Services from "./pages/Services";
 import WallOfSuccess from "./pages/WallOfSuccess";
 import Contacts from "./pages/Contacts";
 
-import { isAuthenticated } from "./utils/auth";
+
+
+import { useEffect, useState } from "react";
+
+import API from "./api/axios";
 
 function PrivateRoute({ children }) {
-  return isAuthenticated() ? children : <Navigate to="/login" replace />;
+  const [loading, setLoading] = useState(true);
+  const [authenticated, setAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const checkUser = async () => {
+      try {
+        const res = await API.get("/admin/auth/me");
+
+      
+
+        setAuthenticated(true);
+      } catch (err) {
+
+
+        setAuthenticated(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkUser();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+
+  return authenticated ? children : <Navigate to="/login" replace />;
 }
 
 PrivateRoute.propTypes = {

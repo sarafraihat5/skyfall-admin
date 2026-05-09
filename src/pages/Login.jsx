@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import API from "../api/axios";
 import Toast, { toast } from "../components/Toast";
-import { setAuth } from "../utils/auth";
+
 import "../Style/Login.css";
 
 export default function Login() {
@@ -31,7 +31,7 @@ export default function Login() {
         password,
       });
 
-      setAuth(data.token);
+     
       toast.success("Welcome back!");
       setTimeout(() => navigate("/"), 500);
     } catch (e) {

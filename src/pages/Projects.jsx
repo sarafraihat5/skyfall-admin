@@ -20,6 +20,8 @@ export default function Projects() {
   const [previews, setPreviews] = useState([]);
   const [existingImages, setExistingImages] = useState([]);
 
+  const getImageUrl = (img) => (typeof img === "string" ? img : img?.url);
+
   const isValidUrl = (value) => {
     try {
       new URL(value);
@@ -41,7 +43,9 @@ export default function Projects() {
     }
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
   const openCreate = () => {
     setTitle("");
@@ -61,8 +65,38 @@ export default function Projects() {
     setUrl(item.url || "");
     setImages([]);
     setPreviews([]);
-    setExistingImages(item.images || []);
+    setExistingImages((item.images || []).map((img) => getImageUrl(img)));
     setModal({ mode: "edit", id: item._id });
+  };
+
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+
+    setImages((prevImages) => {
+      const updatedImages = [...prevImages, ...files];
+
+      if (updatedImages.length > 4) {
+        toast.error("Maximum 4 images allowed");
+        return prevImages;
+      }
+
+      setPreviews(updatedImages.map((file) => URL.createObjectURL(file)));
+      return updatedImages;
+    });
+
+    e.target.value = "";
+  };
+
+  const removeNewImage = (index) => {
+    setImages((prevImages) => {
+      const updatedImages = prevImages.filter((_, i) => i !== index);
+      setPreviews(updatedImages.map((file) => URL.createObjectURL(file)));
+      return updatedImages;
+    });
+  };
+
+  const removeExistingImage = (index) => {
+    setExistingImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSave = async () => {
@@ -72,7 +106,7 @@ export default function Projects() {
       return toast.error("Invalid URL");
     }
 
-    if (existingImages.length + images.length > 4) {
+    if (images.length > 4) {
       return toast.error("Maximum 4 images allowed");
     }
 
@@ -88,15 +122,21 @@ export default function Projects() {
       images.forEach((img) => formData.append("images", img));
 
       if (modal === "create") {
-        if (images.length === 0)
+        if (images.length === 0) {
+          setSaving(false);
           return toast.error("Please select at least one image");
+        }
 
+        // No remainingImages on create
         await API.post("/projects/create", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
 
         toast.success("Project created!");
       } else {
+        // Only send remainingImages on edit
+        formData.append("remainingImages", JSON.stringify(existingImages));
+
         await API.put(`/projects/${modal.id}`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
@@ -159,7 +199,7 @@ export default function Projects() {
                   {item.images?.[0] && (
                     <img
                       className="card-img"
-                      src={item.images[0]}
+                      src={getImageUrl(item.images[0])}
                       alt={item.title}
                     />
                   )}
@@ -193,6 +233,137 @@ export default function Projects() {
           )}
         </main>
       </div>
+
+      {modal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <div className="modal-header">
+              <h2>{modal === "create" ? "Create Project" : "Edit Project"}</h2>
+              <button className="modal-close" onClick={() => setModal(null)}>
+                ×
+              </button>
+            </div>
+
+            <div className="fgroup">
+              <label className="flabel">Title</label>
+              <input
+                className="finput"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Project title"
+              />
+            </div>
+
+            <div className="fgroup">
+              <label className="flabel">Subtitle</label>
+              <input
+                className="finput"
+                value={subtitle}
+                onChange={(e) => setSubtitle(e.target.value)}
+                placeholder="Project subtitle"
+              />
+            </div>
+
+            <div className="fgroup">
+              <label className="flabel">Description</label>
+              <textarea
+                className="finput textarea"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Project description"
+              />
+            </div>
+
+            <div className="fgroup">
+              <label className="flabel">URL</label>
+              <input
+                className="finput"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                placeholder="https://example.com"
+              />
+            </div>
+
+            {existingImages.length > 0 && (
+              <div className="fgroup">
+                <label className="flabel">Existing Images</label>
+                <div className="img-preview-row">
+                  {existingImages.map((img, index) => (
+                    <div className="img-preview-box" key={index}>
+                      <img
+                        src={img}
+                        alt="Existing"
+                        className="img-preview"
+                      />
+                      <button
+                        type="button"
+                        className="img-remove-btn"
+                        onClick={() => removeExistingImage(index)}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="fgroup">
+              <label className="flabel">Images</label>
+
+              <label className="img-add-btn">
+                ＋ Choose Images
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  hidden
+                  onChange={handleFileChange}
+                />
+              </label>
+
+              {previews.length > 0 && (
+                <div className="img-preview-row">
+                  {previews.map((img, index) => (
+                    <div className="img-preview-box" key={index}>
+                      <img
+                        src={img}
+                        alt="Preview"
+                        className="img-preview"
+                      />
+                      <button
+                        type="button"
+                        className="img-remove-btn"
+                        onClick={() => removeNewImage(index)}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="modal-actions">
+              <button
+                className="btn-cancel"
+                onClick={() => setModal(null)}
+                disabled={saving}
+              >
+                Cancel
+              </button>
+
+              <button
+                className="btn-save"
+                onClick={handleSave}
+                disabled={saving}
+              >
+                {saving ? "Saving..." : "Save"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {confirm && (
         <ConfirmDialog

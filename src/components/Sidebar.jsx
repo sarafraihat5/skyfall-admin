@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "./Toast";
-import { clearAuth } from "../utils/auth";
+import API from "../api/axios";
+
 import "./compoStyle/Sidebar.css";
 
 const NAV = [
@@ -40,11 +41,16 @@ export default function Sidebar() {
     };
   }, [open]);
 
-  const handleLogout = () => {
-    clearAuth();
+const handleLogout = async () => {
+  try {
+    await API.post("/admin/auth/logout");
+
     toast.info("Logged out");
     navigate("/login");
-  };
+  } catch (error) {
+    toast.error("Logout failed");
+  }
+};
 
   return (
     <>
